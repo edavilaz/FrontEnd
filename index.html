@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+  <title>Portal de Peliculas - Ucompensar</title>
+  <link rel="icon" type="image/png" href="img/home.png"/>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Inicio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <form class="d-flex mx-2">
+          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Buscar</button>
+        </form>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Registrate</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <section class="jumbotron text-center">
+    <div class="container">
+      <div class="col-12 mt-5">
+                
+        <img class="img-fluid rounded col-12"  src="img/titulo1.png" alt="Películas">
+    
+    </div>
+      <h1 class="jumbotron-heading">Encontrarás las últimas Películas y sus Descripciones!!!</h1>
+      <p class="lead text-muted">Encuentra todo en películas del cine mundial</p>
+    </br>
+    </div>
+  </section>
+  <div class="container">
+    <div class="row" id="peliculas"></div>
+  </div>
+  <script src="js/jquery.min.js"></script>
+  <script>
+      $(document).ready(function() {
+
+        obtenerPopulares();
+
+      });
+//
+      function obtenerPopulares() {
+
+          $.ajax({
+              url: 'https://api.themoviedb.org/3/movie/popular?api_key=1c9824c7805ecfccebc172e98b454cf3&language=es-ES&page=1', //Pendiente Paginacion - Se ajustara para la etapa de profundizacion cuando se migre el proyecto a angular
+              type: 'GET',
+              dataType: 'json',
+              success: function(result, status, xhr) {
+                  let html = '';
+                  for (let item of result.results) {
+                      html += '<div class="col-md-4">';
+                      html += '<div class="card mb-4 box-shadow">';
+                      html += '<img class="card-img-top" src="https://image.tmdb.org/t/p/w500' + item.poster_path + '" alt="Card image cap">';
+                      html += '<div class="card-body">';
+                      html += '<p class="card-text">' + item.title + '</p>';
+                      html += '<p class="card-text">' + item.overview.substring(0, 100) + '...<a href="pelicula.html?idPelicula=' + item.id + '">Ver mas</a></p>';
+                      html += '<div class="d-flex justify-content-between align-items-center">';
+                      html += '<div class="btn-group">';
+                      html += '<button type="button" class="btn btn-sm btn-outline-secondary">' + item.release_date + '</button>';
+                      html += '<button type="button" class="btn btn-sm btn-outline-secondary">' + item.popularity + '</button>';
+                      html += '</div>';
+                      html += '<small class="text-muted">' + item.vote_average + '</small>';
+                      html += '</div>';
+                      html += '</div>';
+                      html += '</div>';
+                      html += '</div>';
+                  }
+                  $('#peliculas').html(html);
+              },
+              error: function(xhr, status) {
+                  console.log('fallo la solicitud');
+              }
+          })
+      }
+  </script>
+</body>
+</html>

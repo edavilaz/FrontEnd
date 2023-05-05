@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<head>
+  <title>Portal de Peliculas - Ucompensar</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Inicio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <form class="d-flex mx-2">
+          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Buscar</button>
+        </form>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Registrate</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <section class="jumbotron text-center bg-dark text-white">
+    <div class="container">
+      <h1 id="titulo"></h1>
+      <div id="descripcion"></div>
+    </div>
+  </section>
+  <div class="container">
+    <div class="row" id="peliculas"></div>
+  </div>
+  <script src="js/jquery.min.js"></script>
+  <title>Detalle Pelicula</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+   
+  </style>
+</head>
+<body>
+  <center>
+    <div id="comentarios">
+      <h2>Comentarios</h2>
+      <div id="comentarios-contenedor">
+        <!-- Aquí se mostrarán los comentarios -->
+      </div>
+    
+      <form id="formulario-comentario">
+        <div>
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" required>
+        </div>
+        <div>
+          <label for="calificacion">Calificación:</label>
+          <select id="calificacion">
+            <option value="1">1 estrella</option>
+            <option value="2">2 estrellas</option>
+            <option value="3">3 estrellas</option>
+            <option value="4">4 estrellas</option>
+            <option value="5">5 estrellas</option>
+          </select>
+        </div>
+        <div>
+          <label for="comentario">Comentario:</label>
+          <textarea id="comentario" required></textarea>
+        </div>
+        <div>
+          <button type="submit">Enviar</button>
+        </div>
+      </form>
+    </div>
+    
+
+    <div id="pelicula"></div>
+
+    <div id="imagen">
+    </div>
+    <div id="imagen2">
+    </div>
+    <h2>Actores</h2>
+    <div id="actores"></div>
+  </center>
+  
+  <script src="js/jquery.min.js"></script>
+  <script>
+
+$(document).ready(function() {
+  // Función para obtener los comentarios desde un servidor o base de datos
+  function getComentarios() {
+    // En este ejemplo, simplemente se muestra un comentario de prueba
+    var comentarios = [{
+      nombre: "Juan",
+      calificacion: 4,
+      comentario: "Excelente película"
+    }];
+
+    // Mostrar los comentarios en el contenedor correspondiente
+    var html = "";
+    for (var i = 0; i < comentarios.length; i++) {
+      var comentario = comentarios[i];
+      html += '<div class="comentario">';
+      html += '<p><strong>' + comentario.nombre + '</strong> (' + comentario.calificacion + ' estrellas)</p>';
+      html += '<p>' + comentario.comentario + '</p>';
+      html += '</div>';
+    }
+    $("#comentarios-contenedor").html(html);
+  }
+
+  // Mostrar los comentarios al cargar la página
+  getComentarios();
+
+  // Función para enviar un comentario
+  $("#formulario-comentario").submit(function(event) {
+    event.preventDefault();
+
+    // Obtener los valores del formulario
+    var nombre = $("#nombre").val();
+    var calificacion = $("#calificacion").val();
+    var comentario = $("#comentario").val();
+
+    // Validar los valores
+    if (nombre.trim() === "" || comentario.trim() === "") {
+      alert("Por favor ingrese su nombre y comentario");
+      return;
+    }
+
+
+
+    // Mostrar el nuevo comentario en el contenedor
+    var html = '<div class="comentario">';
+    html += '<p><strong>' + nombre + '</strong> (' + calificacion + ' estrellas)</p>';
+    html += '<p>' + comentario + '</p>';
+    html += '</div>';
+    $("#comentarios-contenedor").append(html);
+
+    // Limpiar el formulario
+    $("#nombre").val("");
+    $("#calificacion").val("");
+    $("#comentario").val("");
+  });
+});
+
+
+
+
+//Obtener peliculas y actores
+    $(document).ready(function() {
+      var id = getParameterByName('idPelicula');
+      getPelicula(id);
+      getActores(id);
+
+    });
+//Limpiar solicitud
+    function getParameterByName(name) {
+      name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+      return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+//Obtener Pelicula
+    function getPelicula(id) {
+      $.ajax({
+        url: 'https://api.themoviedb.org/3/movie/' + id + '?api_key=a2206509622d57a6ed7e5526a8bcef32&language=es-MX', //API  de TMDB
+        type: 'GET',
+        dataType: 'json',
+        success: function(result, status, xhr) {
+   
+          var html = ' <img src = "https://image.tmdb.org/t/p/w500' + result.backdrop_path + '"> ';
+          $("#pelicula").html(html);
+          if (result.belongs_to_collection !== null) {
+            html = ' <img src = "https://image.tmdb.org/t/p/w500' + result.belongs_to_collection.poster_path + '"> ';
+            $("#imagen").html(html);
+            html = ' <img src = "https://image.tmdb.org/t/p/w500' + result.belongs_to_collection.backdrop_path + '"> ';
+            $("#imagen2").html(html);
+          } else {
+            html = ' <img src= "https://image.tmdb.org/t/p/w500' + result.poster_path + '"> ';
+            $("#imagen").html(html);
+          }
+          $("#titulo").html(result.title);
+          $("#descripcion").html(result.overview);
+         
+
+        }
+      });
+        
+
+}
+//Obtener Acotres
+function getActores(id) {
+  $.ajax({
+    url: 'https://api.themoviedb.org/3/movie/' + id + '/credits?api_key=a2206509622d57a6ed7e5526a8bcef32',
+    type: 'GET',
+    dataType: 'json',
+    success: function(result, status, xhr) {
+      console.log(result);
+      var actoresHtml = "";
+      for (var i = 0; i < result.cast.length; i++) {
+        var actor = result.cast[i];
+        var imagenActor = "";
+        if (actor.profile_path !== null) {
+          imagenActor = ' <img src = "https://image.tmdb.org/t/p/w500' + actor.profile_path + '"> ';
+        }
+        var actorHtml = ' <div class="actor">' + imagenActor + '<p>' + actor.name + '</p></div> ';
+        actoresHtml += actorHtml;
+      }
+      $("#actores").html(actoresHtml);
+    }
+  });
+    
+    }
+  </script>
+</body>
+</html>
